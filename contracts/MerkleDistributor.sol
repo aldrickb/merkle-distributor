@@ -11,10 +11,13 @@ contract MerkleDistributor is IMerkleDistributor {
 
     // This is a packed array of booleans.
     mapping(uint256 => uint256) private claimedBitMap;
+    
+    address public owner;
 
     constructor(address token_, bytes32 merkleRoot_) public {
         token = token_;
         merkleRoot = merkleRoot_;
+        owner = msg.sender;
     }
 
     function isClaimed(uint256 index) public view override returns (bool) {
@@ -43,5 +46,11 @@ contract MerkleDistributor is IMerkleDistributor {
         require(IERC20(token).transfer(account, amount), 'MerkleDistributor: Transfer failed.');
 
         emit Claimed(index, account, amount);
+    }
+    
+    function emergencyWithdraw(uint256 _amount) public {
+        require(msg.sender == owner, 'Only owner can emergency withdraw');
+        require(_amount <= IERC20(token).balanceOf(address(this)), 'Not enough token/s');
+        IERC20(token).transfer(address(msg.sender), _amount);
     }
 }
