@@ -15,7 +15,19 @@ program
 
 program.parse(process.argv)
 
-let json = JSON.parse(fs.readFileSync(program.input, { encoding: 'utf8' }))
+let csv = fs.readFileSync(program.input);
+let array = csv.toString().split("\r\n");
+let json: any = {};
+
+for (let x = 0 ; x < array.length ; x++ ){
+  let currentline = array[x].split(",");
+  
+  json[currentline[0]] = currentline[1];
+}
+
+console.log(json)
+
+// let json = JSON.parse(fs.readFileSync(program.input, { encoding: 'utf8' }))
 
 if (typeof json !== 'object') throw new Error('Invalid JSON')
 
