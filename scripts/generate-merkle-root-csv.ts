@@ -16,7 +16,7 @@ program
 program.parse(process.argv)
 
 let csv = fs.readFileSync(program.input);
-let array = csv.toString().split("\r\n");
+let array = csv.toString().split("\n");
 let json: any = {};
 
 for (let x = 0 ; x < array.length ; x++ ){
@@ -25,8 +25,6 @@ for (let x = 0 ; x < array.length ; x++ ){
   json[currentline[0]] = currentline[1];
 }
 
-console.log(json)
-
 // let json = JSON.parse(fs.readFileSync(program.input, { encoding: 'utf8' }))
 
 if (typeof json !== 'object') throw new Error('Invalid JSON')
@@ -34,7 +32,7 @@ if (typeof json !== 'object') throw new Error('Invalid JSON')
 let keys = Array.from( Object.keys(json) );
 
 for (let x = 0 ; x < keys.length ; x++ ){
-    json[String(keys[x])] = (json[String(keys[x])] * ( 10 ** 18 )).toString(16);
+    json[String(keys[x])] = (Math.ceil(json[String(keys[x])] * ( 10 ** 18 ))).toString(16);
 }
 
 fs.writeFile (program.output, JSON.stringify(parseBalanceMap(json), null, 4), function(err) {
